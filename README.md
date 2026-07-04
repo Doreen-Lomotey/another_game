@@ -2,13 +2,18 @@
 
 ## Deliverable Objective
 
-The objective is to determine the winner of a two-player impartial game in which players repeatedly remove one coin from any chosen subset of non-empty heaps. The implementation applies the mathematical property of the game to produce an efficient solution that satisfies the CSES time and memory constraints.
+This project solves the CSES “Another Game” problem, which determines the winner of a two-player impartial game based on the parity of heap sizes.
 
-**CSES Problem:** https://cses.fi/ckvo8q5wh/task/2208/
+The rule is:
+
+- If at least one heap contains an **odd** number of coins → **first player wins**
+- If all heaps contain **even** numbers → **second player wins**
+
+The solution is derived from a mathematical observation and does not require simulating game moves.
 
 ---
 
-# Project Structure
+## Project Structure
 
 ```text
 another_game
@@ -16,7 +21,6 @@ another_game
 ├── Cargo.toml
 ├── Cargo.lock
 ├── README.md
-├── input.txt
 │
 ├── benches
 │   └── benchmark.rs
@@ -25,32 +29,56 @@ another_game
 │   └── another_game_tests.rs
 │
 └── src
+    ├── main.rs
     ├── lib.rs
-    └── main.rs
-```
+    ├── early_exit_linear_solution.rs
+    ├── full_scan_linear_solution.rs
 
 ---
 
-# Algorithm Overview
-
-The game can be solved using a simple mathematical observation.
-
-If at least one heap contains an **odd** number of coins, the first player has a winning strategy.
-
-If every heap contains an **even** number of coins, the second player wins assuming both players play optimally.
+#  Algorithm Overview
 
 Instead of exploring every possible move, the algorithm performs a single scan through the list of heaps and checks the parity of each value. This produces a linear-time solution while using only constant extra memory. 
 Time Complexity: O(n)
-Space Complexity:O(1)
+Space Complexity:O(1)  
+ 
+ 1. Early Exit Linear Scan (Short-Circuit Evaluation)
 
-# Benchmark Summary
+This approach stops immediately when an odd heap is found.
 
-Criterion measured the algorithm in nanoseconds, confirming that it runs efficiently with very low overhead. The benchmark reflects the expected performance of a single linear scan through the heap list.
+Uses iterator .any() for short-circuit behavior
+Avoids unnecessary computation in best-case scenarios
+Time Complexity: O(n) worst case, often faster in practice
 
-# Benchmark Analysis
+2. Full Scan Linear Traversal
 
-The solution has **O(n)** time complexity because each heap is checked once, and **O(1)** extra space complexity since only a few variables are used. The measured performance matches the theoretical analysis, with runtime increasing linearly as the number of heaps grows. Minor differences between benchmark runs are expected due to system load, CPU scheduling, and compiler optimizations.
+This approach checks every heap even after detecting an odd value.
+Iterates through the entire array
+Does not terminate early
+Time Complexity: O(n) always
+
+
+# Complexity Analysis:
+
+Early Exit Scan:
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+Full Scan Traversal:
+Time Complexity: O(n)
+Space Complexity: O(1)
+
+# Benchmark
+
+Criterion benchmarks show that the early exit version is faster in practice due to short-circuiting, while the full scan always processes the entire input.
+
+#  Test
+
+The project includes unit tests covering:
+
+Single heap cases
+Even-only heap cases
 
 # Conclusion
 
-This implementation satisfies the CSES requirements, passes all tests, includes benchmarking with Criterion, and demonstrates an efficient mathematical solution to the problem.
+Both implementations are correct and run in linear time. The early exit version performs better in practice, while the full scan provides consistent behavior across all inputs.
