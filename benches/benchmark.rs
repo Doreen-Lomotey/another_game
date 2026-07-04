@@ -1,20 +1,36 @@
-use another_game::winner;
+use another_game::early_exit_linear_solution;
+use another_game::full_scan_linear_solution;
+
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-/// Benchmarks the winner function using a large input.
-///
-/// Criterion measures the execution time while `black_box` prevents
-/// compiler optimizations from removing the computation.
-fn benchmark_winner(c: &mut Criterion) {
-    // Create a large test case to measure runtime consistently.
+fn benchmark_early_exit(c: &mut Criterion) {
     let heaps = vec![1u64; 200_000];
 
-    c.bench_function("another_game_linear", |b| {
+    c.bench_function("early_exit_linear", |b| {
         b.iter(|| {
-            black_box(winner(black_box(&heaps)));
+            black_box(
+                early_exit_linear_solution::winner(black_box(&heaps))
+            );
         })
     });
 }
 
-criterion_group!(benches, benchmark_winner);
+fn benchmark_full_scan(c: &mut Criterion) {
+    let heaps = vec![1u64; 200_000];
+
+    c.bench_function("full_scan_linear", |b| {
+        b.iter(|| {
+            black_box(
+                full_scan_linear_solution::winner(black_box(&heaps))
+            );
+        })
+    });
+}
+
+criterion_group!(
+    benches,
+    benchmark_early_exit,
+    benchmark_full_scan
+);
+
 criterion_main!(benches);
